@@ -1,190 +1,205 @@
 package com.example.calculatorapp
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var resultText: TextView
-    private lateinit var historyText: TextView
+    lateinit var result: TextView
+    lateinit var history: TextView
 
-    private var currentInput = ""
-    private var firstNumber = 0.0
-    private var operator = ""
+    var num1 = 0.0
+    var operator = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
-        resultText = findViewById(R.id.textView1)
-        historyText = findViewById(R.id.txtHistory)
+        result = findViewById(R.id.textView1)
+        history = findViewById(R.id.txtHistory)
 
-        val numberButtons = listOf(
-            R.id.btn0,
-            R.id.btn1,
-            R.id.btn2,
-            R.id.btn3,
-            R.id.btn4,
-            R.id.btn5,
-            R.id.btn6,
-            R.id.btn7,
-            R.id.btn8,
-            R.id.btn9,
-            R.id.btn00,
-            R.id.btnDot
-        )
+        // Number Buttons
 
-        for (id in numberButtons) {
+        val btn0 = findViewById<Button>(R.id.btn0)
+        val btn1 = findViewById<Button>(R.id.btn1)
+        val btn2 = findViewById<Button>(R.id.btn2)
+        val btn3 = findViewById<Button>(R.id.btn3)
+        val btn4 = findViewById<Button>(R.id.btn4)
+        val btn5 = findViewById<Button>(R.id.btn5)
+        val btn6 = findViewById<Button>(R.id.btn6)
+        val btn7 = findViewById<Button>(R.id.btn7)
+        val btn8 = findViewById<Button>(R.id.btn8)
+        val btn9 = findViewById<Button>(R.id.btn9)
+        val btn00 = findViewById<Button>(R.id.btn00)
+        val btnDot = findViewById<Button>(R.id.btnDot)
 
-            findViewById<Button>(id).setOnClickListener {
+        // Operator Buttons
 
-                animateButton(it)
+        val btnAdd = findViewById<Button>(R.id.btnAdd)
+        val btnSub = findViewById<Button>(R.id.btnSub)
+        val btnMul = findViewById<Button>(R.id.btnMul)
+        val btnDiv = findViewById<Button>(R.id.btnDiv)
 
-                val value = (it as Button).text.toString()
+        // Other Buttons
 
-                if (value == "." && currentInput.contains(".")) {
-                    return@setOnClickListener
-                }
+        val btnEqual = findViewById<Button>(R.id.btnEqual)
+        val btnClear = findViewById<Button>(R.id.btnClear)
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        val btnPercent = findViewById<Button>(R.id.btnPercent)
 
-                currentInput += value
+        // Number Clicks
 
-                resultText.text = currentInput
+        btn0.setOnClickListener { result.append("0") }
+        btn1.setOnClickListener { result.append("1") }
+        btn2.setOnClickListener { result.append("2") }
+        btn3.setOnClickListener { result.append("3") }
+        btn4.setOnClickListener { result.append("4") }
+        btn5.setOnClickListener { result.append("5") }
+        btn6.setOnClickListener { result.append("6") }
+        btn7.setOnClickListener { result.append("7") }
+        btn8.setOnClickListener { result.append("8") }
+        btn9.setOnClickListener { result.append("9") }
+        btn00.setOnClickListener { result.append("00") }
+
+        // Dot Button
+
+        btnDot.setOnClickListener {
+
+            if (!result.text.contains(".")) {
+                result.append(".")
             }
         }
 
-        setupOperator(R.id.btnAdd, "+")
-        setupOperator(R.id.btnSub, "-")
-        setupOperator(R.id.btnMul, "*")
-        setupOperator(R.id.btnDiv, "/")
+        // Add
 
-        findViewById<Button>(R.id.btnEqual).setOnClickListener {
+        btnAdd.setOnClickListener {
 
-            animateButton(it)
+            if (result.text.isNotEmpty()) {
 
-            calculateResult()
+                num1 = result.text.toString().toDouble()
+                operator = "+"
+
+                history.text = result.text.toString() + " +"
+
+                result.text = ""
+            }
         }
 
-        findViewById<Button>(R.id.btnClear).setOnClickListener {
+        // Subtract
 
-            animateButton(it)
+        btnSub.setOnClickListener {
 
-            currentInput = ""
-            firstNumber = 0.0
+            if (result.text.isNotEmpty()) {
+
+                num1 = result.text.toString().toDouble()
+                operator = "-"
+
+                history.text = result.text.toString() + " -"
+
+                result.text = ""
+            }
+        }
+
+        // Multiply
+
+        btnMul.setOnClickListener {
+
+            if (result.text.isNotEmpty()) {
+
+                num1 = result.text.toString().toDouble()
+                operator = "*"
+
+                history.text = result.text.toString() + " *"
+
+                result.text = ""
+            }
+        }
+
+        // Divide
+
+        btnDiv.setOnClickListener {
+
+            if (result.text.isNotEmpty()) {
+
+                num1 = result.text.toString().toDouble()
+                operator = "/"
+
+                history.text = result.text.toString() + " /"
+
+                result.text = ""
+            }
+        }
+
+        // Equal Button
+
+        btnEqual.setOnClickListener {
+
+            if (result.text.isNotEmpty()) {
+
+                val num2 = result.text.toString().toDouble()
+
+                var ans = 0.0
+
+                if (operator == "+") {
+                    ans = num1 + num2
+                }
+
+                if (operator == "-") {
+                    ans = num1 - num2
+                }
+
+                if (operator == "*") {
+                    ans = num1 * num2
+                }
+
+                if (operator == "/") {
+
+                    if (num2 != 0.0) {
+                        ans = num1 / num2
+                    }
+                    else {
+                        result.text = "Error"
+                    }
+                }
+
+                result.text = ans.toString()
+            }
+        }
+
+        // Clear Button
+
+        btnClear.setOnClickListener {
+
+            result.text = ""
+            history.text = ""
+
+            num1 = 0.0
             operator = ""
-
-            resultText.text = "0"
-            historyText.text = ""
         }
 
-        findViewById<Button>(R.id.btnBack).setOnClickListener {
+        // Backspace Button
 
-            animateButton(it)
+        btnBack.setOnClickListener {
 
-            if (currentInput.isNotEmpty()) {
+            if (result.text.isNotEmpty()) {
 
-                currentInput = currentInput.dropLast(1)
-
-                if (currentInput.isEmpty()) {
-                    resultText.text = "0"
-                } else {
-                    resultText.text = currentInput
-                }
+                result.text = result.text.dropLast(1)
             }
         }
 
-        findViewById<Button>(R.id.btnPercent).setOnClickListener {
+        // Percent Button
 
-            animateButton(it)
+        btnPercent.setOnClickListener {
 
-            if (currentInput.isNotEmpty()) {
+            if (result.text.isNotEmpty()) {
 
-                val number = currentInput.toDouble()
+                val value = result.text.toString().toDouble() / 100
 
-                val result = number / 100
-
-                resultText.text = result.toString()
-
-                currentInput = result.toString()
+                result.text = value.toString()
             }
         }
-    }
-
-    private fun setupOperator(buttonId: Int, op: String) {
-
-        findViewById<Button>(buttonId).setOnClickListener {
-
-            animateButton(it)
-
-            if (currentInput.isNotEmpty()) {
-
-                firstNumber = currentInput.toDouble()
-
-                operator = op
-
-                historyText.text = "$currentInput $operator"
-
-                currentInput = ""
-            }
-        }
-    }
-
-    private fun calculateResult() {
-
-        if (currentInput.isEmpty()) return
-
-        val secondNumber = currentInput.toDouble()
-
-        val result = when (operator) {
-
-            "+" -> firstNumber + secondNumber
-
-            "-" -> firstNumber - secondNumber
-
-            "*" -> firstNumber * secondNumber
-
-            "/" -> {
-                if (secondNumber == 0.0) {
-                    resultText.text = "Error"
-                    return
-                } else {
-                    firstNumber / secondNumber
-                }
-            }
-
-            else -> 0.0
-        }
-
-        historyText.text =
-            "$firstNumber $operator $secondNumber"
-
-        if (result % 1 == 0.0) {
-            resultText.text = result.toInt().toString()
-            currentInput = result.toInt().toString()
-        } else {
-            resultText.text = result.toString()
-            currentInput = result.toString()
-        }
-    }
-
-    private fun animateButton(view: View) {
-
-        view.animate()
-            .scaleX(0.90f)
-            .scaleY(0.90f)
-            .setDuration(70)
-            .withEndAction {
-
-                view.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(70)
-                    .start()
-            }
-            .start()
     }
 }
